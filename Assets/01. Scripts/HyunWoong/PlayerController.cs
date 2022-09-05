@@ -16,7 +16,6 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        m_isJumped = isJumped ? true : false;
         Jump();
 
         Move();
@@ -28,30 +27,30 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void Move()
     {
+        float h = Input.GetAxis("Horizontal");
+        float v = Input.GetAxis("Vertical");
 
-        float h = Input.GetAxis("Horizontal") * m_Speed * Time.deltaTime;
-        float v = Input.GetAxis("Vertical") * m_Speed * Time.deltaTime;
-
-        moveDir = transform.right * h + transform.forward * v;
         if (player.isGrounded)
         {
             moveDir.y = 0f;
         }
         else
         {
-            moveDir.y -= Time.deltaTime * -Physics.gravity.y;
+            moveDir.y -= Time.deltaTime * 9.8f;
         }
 
+        moveDir = new Vector3(h * m_Speed, moveDir.y, v * m_Speed);
 
-        player.Move(moveDir);
+        moveDir = transform.TransformDirection(moveDir);
+
+        player.Move(moveDir * Time.deltaTime);
     }
 
     private void Jump()
     {
-        if (player.isGrounded && m_isJumped)
+        if (isJumped)
         {
-            print("Jumping");
-            moveDir.y = Mathf.Lerp(0, 10f, Time.deltaTime);
+            moveDir.y = 5f;
         }
     }
 }
